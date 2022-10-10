@@ -1,4 +1,5 @@
-SNAKE FULL GAME VERSION 3 :                                                                                                                       #include <iostream>                                                                                                                                                                                                   #include <stdio.h>
+SNAKE FULL GAME VERSION 3 :
+#include <iostream>                                                                                                                                                                                                   #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <ctime> 
@@ -198,15 +199,15 @@ int main()
 		{
 		case 1:
 			cout << " Controls :\n" << "----------\n\n" << "You Can Control The Game with 4 Methods : \n\n"
-				<< "The First Method : \n"
-				<< "/w for up, a for left, s for down, d for right .\n\n"
-				<< "The Second Method : \n"
-				<< "/W for up ,A for left ,S for down,D for right .\n\n"
-				<< "The Third Method : \n "
-				<< "/Arrow key up,Arrow key down,Arrow key left, Arrow key right.\n\n"
-				<< "The Fourth Method : \n"
-				<< "/or with 8.up,2.down,6.right,4left.\n\n\n"
-				<< " And You Can Mix The First and THird Methods Together.\n";
+				<< ".The First Method : \n"
+				<< "./w for up, a for left, s for down, d for right .\n\n"
+				<< ".The Second Method : \n"
+				<< "./W for up ,A for left ,S for down,D for right .\n\n"
+				<< ".The Third Method : \n "
+				<< "./Arrow key up,Arrow key down,Arrow key left, Arrow key right.\n\n"
+				<< ".The Fourth Method : \n"
+				<< "./or with 8.up,2.down,6.right,4left.\n\n\n"
+				<< ".And You Can Mix The First and THird Methods Together.\n";
 			break;
 		case 2:
 			cout
