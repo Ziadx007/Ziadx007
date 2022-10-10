@@ -1,0 +1,290 @@
+SNAKE FULL GAME VERSION 3 :                                                                                                                       #include <iostream>                                                                                                                                                                                                   #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <ctime> 
+#include <cstdlib>
+#include <string>
+#include <conio.h>
+#include <windows.h>
+using namespace std;
+#define KEY_UP 72
+#define KEY_DOWN 80
+#define KEY_LEFT 75
+#define KEY_RIGHT 77
+#define KEY_EXIT 120
+void Shift_Right(int arr[], int size) 
+{
+	for (int i = size - 2; i >= 0; i--)
+		arr[i + 1] = arr[i];
+}
+//----Properties of the game----//
+enum Directions { Top = 1, Down , Right , Left };
+class Map
+{ 
+public: int Width, Hight, FruitX, FruitY; 
+};
+class Snake 
+{
+public: int HeadX, HeadY, Tail_Z, Tail_X[1000] , Tail_Y[1000]; Directions Dir; 
+};
+class Player 
+{
+public: int Score; bool Lose;  int Tscore;
+};
+//------------------------------//
+Map Map1; Snake Snake1; Player Player1;
+void GoToRowColumn(int row_Position, int col_Position)
+{
+	HANDLE z = GetStdHandle(STD_OUTPUT_HANDLE);
+	int x_position = col_Position,y_position = row_Position;
+	COORD screen;
+	HANDLE zOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+	screen.X = x_position;
+	screen.Y = y_position;
+	SetConsoleCursorPosition(zOutput,screen);
+}
+void Fruit_Generator() 
+{
+	srand( time (NULL) );
+	Map1.FruitX = rand() % (Map1.Width - 2) + 1;// from 1 to 48
+	Map1.FruitY = rand() % (Map1.Hight - 2) + 1;// from 1 t0 23
+}
+void Setup() 
+{
+	Map1.Width = 50;
+	Map1.Hight = 25;
+	Fruit_Generator();
+	//----Snake body----//
+	Snake1.HeadX = Map1.Width / 2;
+	Snake1.HeadY = Map1.Hight / 2;
+	Snake1.Tail_Z = 0;
+	//----Player setting----//
+	Player1.Score = 0;
+	Player1.Lose = false;
+}
+void Draw() 
+{
+    system("cls");
+	for (int z = 0; z < Map1.Hight; z++) {
+		for (int j = 0; j < Map1.Width; j++) {
+			if (z == 0 || z == Map1.Hight - 1) cout << "*";
+			else if (j == 0 || j == Map1.Width - 1) cout << "*";
+			else if (z == Snake1.HeadY && j == Snake1.HeadX) cout << "O";
+			else if (z == Map1.FruitY && j == Map1.FruitX) cout << "$";
+			else {
+				bool printed = false;
+				for (int a = 0; a < Snake1.Tail_Z; a++) {
+					if (Snake1.Tail_X[a] == j && Snake1.Tail_Y[a] == z) {
+
+						cout << "o";
+						printed = true;
+						break;
+
+						for (int a = 0; a < Snake1.Tail_Z; a++){
+							if (Snake1.HeadX == Snake1.Tail_X[a] && Snake1.HeadY == Snake1.Tail_Y[a]) {
+								Player1.Lose = true;
+								break;
+							}
+						}
+
+					}
+				}
+				if (!printed) cout << " ";
+			}
+		}
+		cout << endl;
+	}
+	cout << "Player Score : " << Player1.Score << "              Developed By : zx007" << endl
+		<< "Top Score : " << Player1.Tscore << endl;
+}
+void Input()
+{
+	if (_kbhit()) {
+		char c = _getch();
+		switch (c)
+		{
+//------(ARROWS: UP,DOWN,LEFT,RIGHT)-------//
+		case KEY_UP: Snake1.Dir = Top; break;
+		case KEY_DOWN: Snake1.Dir = Down; break;
+		case KEY_RIGHT: Snake1.Dir = Right; break;
+		case KEY_LEFT: Snake1.Dir = Left; break;
+		case NULL:exit(0);
+//----------(Controles:w,s,d,a)------------//
+		case 'w': Snake1.Dir = Top; break;
+		case 's': Snake1.Dir = Down; break;
+		case 'd': Snake1.Dir = Right; break;
+		case 'a': Snake1.Dir = Left; break;
+		case 'x': exit(0);
+//---------(Controles: W,S,D,A)-------------//
+		case 'W': Snake1.Dir = Top; break;
+		case 'S': Snake1.Dir = Down; break;
+		case 'D': Snake1.Dir = Right; break;
+		case 'A': Snake1.Dir = Left; break;
+		case 'X': exit(0);
+//---------(Controles: 8,2,6,4)-------------//
+		case '8': Snake1.Dir = Top; break;
+		case '2': Snake1.Dir = Down; break;
+		case '6': Snake1.Dir = Right; break;
+		case '4': Snake1.Dir = Left; break;
+		case '0': exit(0);
+//------------------------------------------//
+		}
+	}
+}
+void Logic() 
+{
+	Shift_Right(Snake1.Tail_X , 1000);
+	Shift_Right(Snake1.Tail_Y , 1000);
+	Snake1.Tail_X[0] = Snake1.HeadX;
+	Snake1.Tail_Y[0] = Snake1.HeadY;
+
+	switch (Snake1.Dir)
+	{
+	case Top: Snake1.HeadY--; break;
+	case Down: Snake1.HeadY++; break;
+	case Right: Snake1.HeadX++; break;
+	case Left: Snake1.HeadX--; break;
+	}
+	if (Snake1.HeadY >= Map1.Hight || Snake1.HeadY <= -1 || Snake1.HeadX >= Map1.Width || Snake1.HeadX <= -1)
+		Player1.Lose = true; 
+
+	for (int i = 0; i < Snake1.Tail_Z; i++) {
+		if (Snake1.Tail_X[i] == Snake1.HeadX && Snake1.Tail_Y[i] == Snake1.HeadY) {
+			Player1.Lose = true;
+		}
+	}
+
+	if (Snake1.HeadX == Map1.FruitX && Snake1.HeadY == Map1.FruitY) {
+		
+		Fruit_Generator();
+		Player1.Score += 10;
+		Player1.Tscore += 10;
+		Snake1.Tail_Z++;
+		
+		
+	}
+}
+int main() 
+{
+	//-------------------------------------------First Page--------------------------------------------------//
+	system("color 70");
+	int x = 0;
+	//----Welcome Messege----//
+	cout << "--------------\n" << "- Snake Game -\n" << "------------------\n" << "- Version : zx03 -\n" << "------------------\n";
+	cout << ".Please Enter Your Name : ";
+	string UserName = " ";
+	getline(cin, UserName);
+	UserName = ".Hi," + UserName;
+	cout << UserName;
+	//--------//
+	int Choice;
+	do {
+		cout << ""
+			<< "\n\n\t\t MAIN MENU : \n" << "                ------------  "
+			<< "\n\n\t   [1]. Settings"
+			<< "\n\n\t   [2]. About the game"
+			<< "\n\n\t   [3]. Exit\n\n"
+			
+			//--------------------------------//
+			<< "\n\n\t\t PLAY MENU : \n" << "                -----------\n"
+			<< "\n           .Choose Your Difficulty :\n "
+			<< "\n           [4].Easy"
+			<< "\n           [5].Normal"
+			<< "\n           [6].Hard"
+			<< "\n           [7].Insane   \n";
+		//---------------------------------------//
+		cin >> Choice;
+		switch (Choice)
+		{
+		case 1:
+			cout << " Controls :\n" << "----------\n\n" << "You Can Control The Game with 4 Methods : \n\n"
+				<< "The First Method : \n"
+				<< "/w for up, a for left, s for down, d for right .\n\n"
+				<< "The Second Method : \n"
+				<< "/W for up ,A for left ,S for down,D for right .\n\n"
+				<< "The Third Method : \n "
+				<< "/Arrow key up,Arrow key down,Arrow key left, Arrow key right.\n\n"
+				<< "The Fourth Method : \n"
+				<< "/or with 8.up,2.down,6.right,4left.\n\n\n"
+				<< " And You Can Mix The First and THird Methods Together.\n";
+			break;
+		case 2:
+			cout
+				<< "Credits : \n\n" << "----------\n\n"
+				<< "[.The game was developed by the developer Zeyad Hassan with the help and supervision of the great Dr.Ahmed Abdel Aal.\n"
+
+				<< "The game was officially launched in 2022,in the month of October,on 9.\n"
+
+				<< "The game was developed and created using Microsoft Visual Studio, released in 2022.\n"
+
+				<< "The language used in programming the game is the C++ programming language.\n"
+
+				<< "Special thanks to Mr.Ahmed Abdel Aal.]\n";
+			break;
+		case 3:
+			bool yesorno;
+			bool yes;
+			bool no;
+			cout << "\nAre you Sure You Want To Exit\n";
+			cin >> yesorno;
+			yes = true;
+			no = false;
+			return 0;
+			break;
+		case 4:
+			cout << "Lets Go Your Difficulty is Easy\n";
+			Setup();
+			system("color 5");
+			while (!Player1.Lose)
+			{
+				Draw();
+				Input();
+				Logic();
+				Sleep(40);
+			}
+			system("pause");
+			break;
+		case 5:
+			cout << "Lets Go Your Difficulty is Normal\n";
+			Setup();
+			system("color 72");
+			while (!Player1.Lose)
+			{
+				Draw();
+				Input();
+				Logic();
+				Sleep(35);
+			}
+			system("pause");
+			break;
+		case 6:
+			cout << "Lets Go Your Difficulty is Hard\n";
+			Setup();
+			system("color 74");
+			while (!Player1.Lose)
+			{
+				Draw();
+				Input();
+				Logic();
+				Sleep(25);
+			}
+			system("pause");
+			break;
+		case 7:
+			cout << "Lets Go Your Difficulty is Insane!\n";
+			Setup();
+			system("color 6");
+			while (!Player1.Lose)
+			{
+				Draw();
+				Input();
+				Logic();
+				Sleep(5);
+			}
+			system("pause");
+			break;
+		}
+	}while (Choice != 0);
+
+	return 0;
+}
